@@ -29,34 +29,284 @@ file_backup_firefox()
 	then
 		echo "Default Firefox config directory does not exist!"
 		break
-	elif [ ! -f HOME/.mozilla/firefox/profiles.ini ]
+	elif [ ! -f $HOME/.mozilla/firefox/profiles.ini ]
 	then
 		echo "Default profile file is missing!"
 		break
+	else
+		PROFILE_NAME=$(grep ^Path $HOME/.mozilla/firefox/profiles.ini | cut -f 2 -d '=')
+		RC_PROFILE=$?
+		if [ $RC_PROFILE -ne 0 ]
+		then
+			echo "Firefox profile is missing!"
+			break
+		else
+			cd $HOME/.mozilla/firefox/$PROFILE_NAME
+			echo "I reached $(pwd) path!"
+			echo "Starting Firefox backup..."
+			echo "You will have to choose what to backup!"
+			
+			# Backup for bookmark
+
+			echo -n "Do you want to backup bookmark? Press y for yes or n for no: "
+			read BOOKMARK_OPTION
+			while [ "$BOOKMARK_OPTION" != "y" ] && [ "$BOOKMARK_OPTION" != "n" ]
+			do
+				echo -n "Invalid choice! Type y for yes or n for no!"
+				read BOOKMARK_OPTION
+			done
+			if [ $BOOKMARK_OPTION == "y" ]
+			then
+				echo "Starting backup for bookmark..."
+				BOOKMARK_FILE=places.sqlite
+				if [ -f $BOOKMARK_FILE ]
+				then
+					echo "Bookmark file exists!"
+					echo "Creating bookmark backup..."
+					cp -f $BOOKMARK_FILE $HOME/backup/firefox/bookmark # Replace with variable created path and treat the case when it doesn't exist
+					RC_COPY_BOOKMARK=$?
+					if [ $RC_COPY_BOOKMARK -eq 0 ]
+					then
+						echo "Bookmark backup created successfully!"
+					else
+						echo "Failed to create backup for bookmark!"
+					fi
+				else
+					echo "Bookmark file does not exist!"
+					echo "Can not create backup!"
+				fi
+			else
+				echo "Bookmark backup will not be created!"
+			fi
+
+			# Backup for cookies
+
+			echo -n "Do you want to backup cookies? Press y for yes or n for no: "
+			read COOKIES_OPTION
+			while [ "$COOKIES_OPTION" != "y" ] && [ "$COOKIES_OPTION" != "n" ]
+			do
+				echo -n "Invalid choice! Type y for yes or n for no!"
+				read COOKIES_OPTION
+			done
+			if [ $COOKIES_OPTION == "y" ]
+			then
+				echo "Starting backup for cookies..."
+				COOKIES_FILE=cookies.sqlite
+				if [ -f $COOKIES_FILE ]
+				then
+					echo "Cookies file exists!"
+					echo "Creating cookies backup..."
+					cp -f $COOKIES_FILE $HOME/backup/firefox/cookies # Replace with variable created path and treat the case when it doesn't exist
+					RC_COPY_COOKIES=$?
+					if [ $RC_COPY_COOKIES -eq 0 ]
+					then
+						echo "Cookies backup created successfully!"
+					else
+						echo "Failed to create backup for cookies!"
+					fi
+				else
+					echo "Cookies file does not exist!"
+					echo "Can not create backup!"
+				fi
+			else
+				echo "Cookies backup will not be created!"
+			fi	
+
+			# Backup for preferences
+
+			echo -n "Do you want to backup preferences (homepage and others) ? Press y for yes or n for no: "
+			read PREFS_OPTION
+			while [ "$PREFS_OPTION" != "y" ] && [ "$PREFS_OPTION" != "n" ]
+			do
+				echo -n "Invalid choice! Type y for yes or n for no!"
+				read PREFS_OPTION
+			done
+			if [ $PREFS_OPTION == "y" ]
+			then
+				echo "Starting backup for preferences..."
+				PREFS_FILE=prefs.js
+				if [ -f $PREFS_FILE ]
+				then
+					echo "Prefereces file exists!"
+					echo "Creating preferences backup..."
+					cp -f $PREFS_FILE $HOME/backup/firefox/preferences # Replace with variable created path and treat the case when it doesn't exist
+					RC_COPY_PREFS=$?
+					if [ $RC_COPY_PREFS -eq 0 ]
+					then
+						echo "Preferences backup created successfully!"
+					else
+						echo "Failed to create backup for preferences!"
+					fi
+				else
+					echo "Preferences file does not exist!"
+					echo "Can not create backup!"
+				fi
+			else
+				echo "Preferences backup will not be created!"
+			fi	
+
+		fi
 	fi
-	BOOKMARK_FILE=places.sqlite
-	HOMEPAGE_FILE=prefs.js
-	COOKIE_FILE=cookies.sqlite
-	echo "Starting Firefox backup..."
-	echo "You will have to choose what to backup!"
-	echo "Do you want to backup bookmark? Press y for yes or n for no: "
-	read -p BOOKMARK_OPTION
-	while [ "$BOOKMARK_OPTION" != "y" ] && [ "$BOOKMARK_OPTION" != "n" ]
-	do
-		echo "Invalid choice! Type y for yes or n for no!"
-		read BOOKMARK_OPTION
-	done
-	if [ $BOOKMARK_OPTION == "y" ]
+	# BOOKMARK_FILE=places.sqlite
+	# HOMEPAGE_FILE=prefs.js
+	# COOKIE_FILE=cookies.sqlite
+	# echo "Starting Firefox backup..."
+	# echo "You will have to choose what to backup!"
+	# echo "Do you want to backup bookmark? Press y for yes or n for no: "
+	# read -p BOOKMARK_OPTION
+	# while [ "$BOOKMARK_OPTION" != "y" ] && [ "$BOOKMARK_OPTION" != "n" ]
+	# do
+	# 	echo "Invalid choice! Type y for yes or n for no!"
+	# 	read BOOKMARK_OPTION
+	# done
+	# if [ $BOOKMARK_OPTION == "y" ]
+	# then
+	# 	echo "Starting backup for bookmark..."
+	# fi
+}
+
+# Chromium backup
+
+file_backup_chromium()
+{
+	if [ ! -d $HOME/.config ]
 	then
-		echo "Starting backup for bookmark..."
+		echo "Default config directory does not exist!"
+		break
+	elif [ ! -d $HOME/.config/chromium ] 
+	then
+		echo "Default Chromium config directory does not exist!"
+		break
+	elif [ ! -d $HOME/.config/chromium/Default ]
+	then
+		echo "Default profile is missing!"
+		break
+	else
+		#PROFILE_NAME=$(grep ^Path $HOME/.mozilla/firefox/profiles.ini | cut -f 2 -d '=')
+		#RC_PROFILE=$?
+		#if [ $RC_PROFILE -ne 0 ]
+		#then
+		#	echo "Firefox profile is missing!"
+		#	break
+		#else
+			cd $HOME/.config/chromium/Default
+			echo "I reached $(pwd) path!"
+			echo "Starting Chromium backup..."
+			echo "You will have to choose what to backup!"
+			
+			# Backup for bookmark
+
+			echo -n "Do you want to backup bookmark? Press y for yes or n for no: "
+			read BOOKMARK_OPTION
+			while [ "$BOOKMARK_OPTION" != "y" ] && [ "$BOOKMARK_OPTION" != "n" ]
+			do
+				echo -n "Invalid choice! Type y for yes or n for no!"
+				read BOOKMARK_OPTION
+			done
+			if [ $BOOKMARK_OPTION == "y" ]
+			then
+				echo "Starting backup for bookmark..."
+				BOOKMARK_FILE=Bookmarks
+				if [ -f $BOOKMARK_FILE ]
+				then
+					echo "Bookmark file exists!"
+					echo "Creating bookmark backup..."
+					cp -f $BOOKMARK_FILE $HOME/backup/chromium/bookmark # Replace with variable created path and treat the case when it doesn't exist
+					RC_COPY_BOOKMARK=$?
+					if [ $RC_COPY_BOOKMARK -eq 0 ]
+					then
+						echo "Bookmark backup created successfully!"
+					else
+						echo "Failed to create backup for bookmark!"
+					fi
+				else
+					echo "Bookmark file does not exist!"
+					echo "Can not create backup!"
+				fi
+			else
+				echo "Bookmark backup will not be created!"
+			fi
+
+			# Backup for cookies
+
+			echo -n "Do you want to backup cookies? Press y for yes or n for no: "
+			read COOKIES_OPTION
+			while [ "$COOKIES_OPTION" != "y" ] && [ "$COOKIES_OPTION" != "n" ]
+			do
+				echo -n "Invalid choice! Type y for yes or n for no!"
+				read COOKIES_OPTION
+			done
+			if [ $COOKIES_OPTION == "y" ]
+			then
+				echo "Starting backup for cookies..."
+				COOKIES_FILE=Cookies
+				if [ -f $COOKIES_FILE ]
+				then
+					echo "Cookies file exists!"
+					echo "Creating cookies backup..."
+					cp -f $COOKIES_FILE $HOME/backup/chromium/cookies # Replace with variable created path and treat the case when it doesn't exist
+					RC_COPY_COOKIES=$?
+					if [ $RC_COPY_COOKIES -eq 0 ]
+					then
+						echo "Cookies backup created successfully!"
+					else
+						echo "Failed to create backup for cookies!"
+					fi
+				else
+					echo "Cookies file does not exist!"
+					echo "Can not create backup!"
+				fi
+			else
+				echo "Cookies backup will not be created!"
+			fi	
+
+			# Backup for preferences
+
+			echo -n "Do you want to backup preferences (homepage and others) ? Press y for yes or n for no: "
+			read PREFS_OPTION
+			while [ "$PREFS_OPTION" != "y" ] && [ "$PREFS_OPTION" != "n" ]
+			do
+				echo -n "Invalid choice! Type y for yes or n for no!"
+				read PREFS_OPTION
+			done
+			if [ $PREFS_OPTION == "y" ]
+			then
+				echo "Starting backup for preferences..."
+				PREFS_FILE=Preferences
+				if [ -f $PREFS_FILE ]
+				then
+					echo "Prefereces file exists!"
+					echo "Creating preferences backup..."
+					cp -f $PREFS_FILE $HOME/backup/chromium/preferences # Replace with variable created path and treat the case when it doesn't exist
+					RC_COPY_PREFS=$?
+					if [ $RC_COPY_PREFS -eq 0 ]
+					then
+						echo "Preferences backup created successfully!"
+					else
+						echo "Failed to create backup for preferences!"
+					fi
+				else
+					echo "Preferences file does not exist!"
+					echo "Can not create backup!"
+				fi
+			else
+				echo "Preferences backup will not be created!"
+			fi	
+
+		#fi
 	fi
+}
+
+file_backup_chromium-browser()
+{
+	file_backup_chromium
 }
 
 # Backup function
 
 file_backup()
 {
-
+	continue
 }
 
 ### Get user option : backup or restore
@@ -83,5 +333,6 @@ get_user_option()
 	esac
 }
 
-get_distro
-get_user_option
+# get_distro
+# get_user_option
+file_backup_firefox
