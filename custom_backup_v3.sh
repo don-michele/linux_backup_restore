@@ -24,7 +24,11 @@ get_distro()
 
 file_backup_firefox()
 {
-	if [ ! -d $HOME/.mozilla ]
+	if [ ! -d $1 ]
+	then
+		echo "Target directory to backup to does not exist!"
+		break
+	elif [ ! -d $HOME/.mozilla ]
 	then
 		echo "Default Mozilla config directory does not exist!"
 		break
@@ -44,7 +48,9 @@ file_backup_firefox()
 			echo "Firefox profile is missing!"
 			break
 		else
-			cd $HOME/.mozilla/firefox/$PROFILE_NAME
+			SOURCE_LOCATION=$HOME/.mozilla/firefox/$PROFILE_NAME
+			TARGET_LOCATION=$1
+			cd $SOURCE_LOCATION
 			echo "I reached $(pwd) path!"
 			echo "Starting Firefox backup..."
 			echo "You will have to choose what to backup!"
@@ -62,11 +68,11 @@ file_backup_firefox()
 			then
 				echo "Starting backup for bookmark..."
 				BOOKMARK_FILE=places.sqlite
-				if [ -f $BOOKMARK_FILE ]
+				if [ -f $SOURCE_LOCATION/$BOOKMARK_FILE ]
 				then
 					echo "Bookmark file exists!"
 					echo "Creating bookmark backup..."
-					cp -f $BOOKMARK_FILE $HOME/backup/firefox/bookmark # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$BOOKMARK_FILE $TARGET_LOCATION
 					RC_COPY_BOOKMARK=$?
 					if [ $RC_COPY_BOOKMARK -eq 0 ]
 					then
@@ -95,11 +101,11 @@ file_backup_firefox()
 			then
 				echo "Starting backup for cookies..."
 				COOKIES_FILE=cookies.sqlite
-				if [ -f $COOKIES_FILE ]
+				if [ -f $SOURCE_LOCATION/$COOKIES_FILE ]
 				then
 					echo "Cookies file exists!"
 					echo "Creating cookies backup..."
-					cp -f $COOKIES_FILE $HOME/backup/firefox/cookies # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$COOKIES_FILE $TARGET_LOCATION
 					RC_COPY_COOKIES=$?
 					if [ $RC_COPY_COOKIES -eq 0 ]
 					then
@@ -128,11 +134,11 @@ file_backup_firefox()
 			then
 				echo "Starting backup for preferences..."
 				PREFS_FILE=prefs.js
-				if [ -f $PREFS_FILE ]
+				if [ -f $SOURCE_LOCATION/$PREFS_FILE ]
 				then
 					echo "Prefereces file exists!"
 					echo "Creating preferences backup..."
-					cp -f $PREFS_FILE $HOME/backup/firefox/preferences # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$PREFS_FILE $TARGET_LOCATION
 					RC_COPY_PREFS=$?
 					if [ $RC_COPY_PREFS -eq 0 ]
 					then
@@ -150,22 +156,6 @@ file_backup_firefox()
 
 		fi
 	fi
-	# BOOKMARK_FILE=places.sqlite
-	# HOMEPAGE_FILE=prefs.js
-	# COOKIE_FILE=cookies.sqlite
-	# echo "Starting Firefox backup..."
-	# echo "You will have to choose what to backup!"
-	# echo "Do you want to backup bookmark? Press y for yes or n for no: "
-	# read -p BOOKMARK_OPTION
-	# while [ "$BOOKMARK_OPTION" != "y" ] && [ "$BOOKMARK_OPTION" != "n" ]
-	# do
-	# 	echo "Invalid choice! Type y for yes or n for no!"
-	# 	read BOOKMARK_OPTION
-	# done
-	# if [ $BOOKMARK_OPTION == "y" ]
-	# then
-	# 	echo "Starting backup for bookmark..."
-	# fi
 }
 
 # Firefox restore
@@ -196,6 +186,8 @@ file_restore_firefox()
 			echo "Firefox profile is missing!"
 			break
 		else
+			SOURCE_LOCATION=$1
+			TARGET_LOCATION=$HOME/.mozilla/firefox/$PROFILE_NAME
 			echo "Starting Firefox restore..."
 			echo "You will have to choose what to restore!"
 			
@@ -213,11 +205,11 @@ file_restore_firefox()
 				echo "Starting restore for bookmark..."
 				#BOOKMARK_FILE=places.sqlite
 				BOOKMARK_FILE=bucmarc
-				if [ -f $1/$BOOKMARK_FILE ]
+				if [ -f $SOURCE_LOCATION/$BOOKMARK_FILE ]
 				then
 					echo "Bookmark file exists!"
 					echo "Restoring bookmark..."
-					cp -f $1/$BOOKMARK_FILE $HOME/.mozilla/firefox/$PROFILE_NAME # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$BOOKMARK_FILE $TARGET_LOCATION
 					RC_COPY_BOOKMARK=$?
 					if [ $RC_COPY_BOOKMARK -eq 0 ]
 					then
@@ -247,11 +239,11 @@ file_restore_firefox()
 				echo "Starting restore for cookies..."
 				#COOKIES_FILE=cookies.sqlite
 				COOKIES_FILE=cuchis
-				if [ -f $1/$COOKIES_FILE ]
+				if [ -f $SOURCE_LOCATION/$COOKIES_FILE ]
 				then
 					echo "Cookies file exists!"
 					echo "Restoring cookies..."
-					cp -f $1/$COOKIES_FILE $HOME/.mozilla/firefox/$PROFILE_NAME # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$COOKIES_FILE $TARGET_LOCATION
 					RC_COPY_COOKIES=$?
 					if [ $RC_COPY_COOKIES -eq 0 ]
 					then
@@ -281,11 +273,11 @@ file_restore_firefox()
 				echo "Starting restore for preferences..."
 				#PREFS_FILE=prefs.js
 				PREFS_FILE=preferensis
-				if [ -f $1/$PREFS_FILE ]
+				if [ -f $SOURCE_LOCATION/$PREFS_FILE ]
 				then
 					echo "Prefereces file exists!"
 					echo "Restoring preferences..."
-					cp -f $1/$PREFS_FILE $HOME/.mozilla/firefox/$PROFILE_NAME # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$PREFS_FILE $TARGET_LOCATION
 					RC_COPY_PREFS=$?
 					if [ $RC_COPY_PREFS -eq 0 ]
 					then
@@ -309,7 +301,11 @@ file_restore_firefox()
 
 file_backup_chromium()
 {
-	if [ ! -d $HOME/.config ]
+	if [ ! -d $1 ]
+	then
+		echo "Target directory to backup to does not exist!"
+		break
+	elif [ ! -d $HOME/.config ]
 	then
 		echo "Default config directory does not exist!"
 		break
@@ -329,8 +325,10 @@ file_backup_chromium()
 		#	echo "Firefox profile is missing!"
 		#	break
 		#else
-			cd $HOME/.config/chromium/Default
-			echo "I reached $(pwd) path!"
+			SOURCE_LOCATION=$HOME/.config/chromium/Default
+			TARGET_LOCATION=$1
+			#cd $HOME/.config/chromium/Default
+			#echo "I reached $(pwd) path!"
 			echo "Starting Chromium backup..."
 			echo "You will have to choose what to backup!"
 			
@@ -347,11 +345,11 @@ file_backup_chromium()
 			then
 				echo "Starting backup for bookmark..."
 				BOOKMARK_FILE=Bookmarks
-				if [ -f $BOOKMARK_FILE ]
+				if [ -f $SOURCE_LOCATION/$BOOKMARK_FILE ]
 				then
 					echo "Bookmark file exists!"
 					echo "Creating bookmark backup..."
-					cp -f $BOOKMARK_FILE $HOME/backup/chromium/bookmark # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$BOOKMARK_FILE $TARGET_LOCATION
 					RC_COPY_BOOKMARK=$?
 					if [ $RC_COPY_BOOKMARK -eq 0 ]
 					then
@@ -380,11 +378,11 @@ file_backup_chromium()
 			then
 				echo "Starting backup for cookies..."
 				COOKIES_FILE=Cookies
-				if [ -f $COOKIES_FILE ]
+				if [ -f $SOURCE_LOCATION/$COOKIES_FILE ]
 				then
 					echo "Cookies file exists!"
 					echo "Creating cookies backup..."
-					cp -f $COOKIES_FILE $HOME/backup/chromium/cookies # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$COOKIES_FILE $TARGET_LOCATION
 					RC_COPY_COOKIES=$?
 					if [ $RC_COPY_COOKIES -eq 0 ]
 					then
@@ -413,11 +411,11 @@ file_backup_chromium()
 			then
 				echo "Starting backup for preferences..."
 				PREFS_FILE=Preferences
-				if [ -f $PREFS_FILE ]
+				if [ -f $SOURCE_LOCATION/$PREFS_FILE ]
 				then
 					echo "Prefereces file exists!"
 					echo "Creating preferences backup..."
-					cp -f $PREFS_FILE $HOME/backup/chromium/preferences # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$PREFS_FILE $TARGET_LOCATION
 					RC_COPY_PREFS=$?
 					if [ $RC_COPY_PREFS -eq 0 ]
 					then
@@ -470,7 +468,9 @@ file_restore_chromium()
 		#	echo "Firefox profile is missing!"
 		#	break
 		#else
-			cd $HOME/.config/chromium/Default
+			SOURCE_LOCATION=$1
+			TARGET_LOCATION=$HOME/.config/chromium/Default
+			#cd $HOME/.config/chromium/Default
 			#echo "I reached $(pwd) path!"
 			echo "Starting Chromium restore..."
 			echo "You will have to choose what to restore!"
@@ -489,11 +489,11 @@ file_restore_chromium()
 				echo "Starting restore for bookmark..."
 				#BOOKMARK_FILE=Bookmarks
 				BOOKMARK_FILE=bucmarc
-				if [ -f $1/$BOOKMARK_FILE ]
+				if [ -f $SOURCE_LOCATION/$BOOKMARK_FILE ]
 				then
 					echo "Bookmark file exists!"
 					echo "Restoring bookmark..."
-					cp -f $1/$BOOKMARK_FILE $HOME/.config/chromium/Default # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$BOOKMARK_FILE $TARGET_LOCATION
 					RC_COPY_BOOKMARK=$?
 					if [ $RC_COPY_BOOKMARK -eq 0 ]
 					then
@@ -523,11 +523,11 @@ file_restore_chromium()
 				echo "Starting restore for cookies..."
 				#COOKIES_FILE=Cookies
 				COOKIES_FILE=cuchis
-				if [ -f $1/$COOKIES_FILE ]
+				if [ -f $SOURCE_LOCATION/$COOKIES_FILE ]
 				then
 					echo "Cookies file exists!"
 					echo "Restoring cookies..."
-					cp -f $1/$COOKIES_FILE $HOME/.config/chromium/Default # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$COOKIES_FILE $TARGET_LOCATION
 					RC_COPY_COOKIES=$?
 					if [ $RC_COPY_COOKIES -eq 0 ]
 					then
@@ -557,11 +557,11 @@ file_restore_chromium()
 				echo "Starting restore for preferences..."
 				#PREFS_FILE=Preferences
 				PREFS_FILE=preferensis
-				if [ -f $1/$PREFS_FILE ]
+				if [ -f $SOURCE_LOCATION/$PREFS_FILE ]
 				then
 					echo "Prefereces file exists!"
 					echo "Restoring preferences..."
-					cp -f $1/$PREFS_FILE $HOME/.config/chromium/Default # Replace with variable created path and treat the case when it doesn't exist
+					cp -f $SOURCE_LOCATION/$PREFS_FILE $TARGET_LOCATION
 					RC_COPY_PREFS=$?
 					if [ $RC_COPY_PREFS -eq 0 ]
 					then
@@ -588,21 +588,64 @@ file_restore_chromium-browser()
 
 # Backup function
 
-file_backup()
+precheck_and_start()
 {
+	# Get directory path for the script and additional files
+
+	SCRIPT_SOURCE_DIR=$(dirname $(realpath $0))
+	RC_SCRIPT_SRC_DIR=$?
+	if [ $RC_SCRIPT_SRC_DIR -ne 0 ]
+	then
+		if [ $(dirname $0) == '.' ]
+		then
+			SCRIPT_SOURCE_DIR=$(pwd)
+		else
+			SCRIPT_SOURCE_DIR=$(dirname $0)
+		fi
+	fi
+
 	# Check if distro file exists
 
-	# Check if the file has read rights for the user
+	if [ ! -f $SCRIPT_SOURCE_DIR/$LINUX_DISTRO ]
+	then
+		echo "A corresponding file for distribution $LINUX_DISTRO was not found!"
+		echo "Your distribution is not currently supported!"
+		echo "The program will exit now!"
+		exit 1
+	elif [ ! -r $SCRIPT_SOURCE_DIR/$LINUX_DISTRO ]
+	then
+		echo "The corresponding file for your distribution can not be read with the current running user!"
+		echo "Please add read permissions to the file or try with a different user!"
+		echo "The program will exit now!"
+		exit 1
+	else
+		# Get the backup/restore directory
 
-	while read line
-	do
-		echo "Perform activities on software: $line"
-	done < ${LINUX_DISTRO}.txt
-}
+		ACTION_MODE=$1
+		echo -n "Please type the directory (full path!) for $ACTION_MODE : "
+		read CONTENT_DIR
+		while [ ! -d $CONTENT_DIR ]
+		do
+			echo -n "$CONTENT_DIR does not exist! Please type an existing directory : "
+			read CONTENT_DIR
+		done
 
-file_restore()
-{
-	continue
+		# Check if the backup directory has write permissions
+
+		if [ ! -r $CONTENT_DIR ] && [ ! -w $CONTENT_DIR ] && [ ! -x $CONTENT_DIR ]
+		then
+			echo "You don't have full permissions on directory $CONTENT_DIR!"
+			echo "Please add full permissions on directory or try with a different user!"
+			echo "The program will exit now!"
+			exit 1
+		else
+			SOFTWARE_LIST=()
+			while read software
+			do
+				SOFTWARE_LIST+=(file_${ACTION_MODE}_${software})
+			done < ${LINUX_DISTRO}
+		fi
+	fi
 }
 
 ### Get user option : backup or restore
@@ -621,21 +664,38 @@ get_user_option()
 			echo "You chose backup" # To be replaced with the backup branch
 			get_distro
 			echo "Reading file $LINUX_DISTRO"
-			file_backup
+			precheck_and_start backup
+			for software in ${SOFTWARE_LIST[@]}
+			do
+				$software $CONTENT_DIR
+			done
 			;;
 		"r")
 			echo "You chose restore" # To be replaced with restore branch
 			get_distro
 			echo "Reading file $LINUX_DISTRO"
+			precheck_and_start restore
+			for software in ${SOFTWARE_LIST[@]}
+			do
+				$software $CONTENT_DIR
+			done
 			;;
 		"q")
 			echo "You chose quit!" # To quit 
+			exit 0
 			;;
 	esac
 }
 
+launch_script()
+{
+	file_backup_firefox /home/don-michele/pula
+	file_backup_chromium /home/don-michele/pula
+}
+
+#launch_script
 #get_distro
 get_user_option
-#file_backup_firefox
+#file_backup_firefox /home/don-michele/pula
 #file_restore_firefox $HOME/ristor
 #file_restore_chromium $HOME/ristor
