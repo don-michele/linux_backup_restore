@@ -689,13 +689,13 @@ get_user_option()
 
 launch_script()
 {
-	file_backup_firefox /home/don-michele/pula
-	file_backup_chromium /home/don-michele/pula
+	file_backup_firefox /home/don-michele/stuff
+	file_backup_chromium /home/don-michele/stuff
 }
 
 #launch_script
 #get_distro
 get_user_option
-#file_backup_firefox /home/don-michele/pula
+#file_backup_firefox /home/don-michele/stuff
 #file_restore_firefox $HOME/ristor
 #file_restore_chromium $HOME/ristor
